@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistente Digital de Terminología Técnica Bilingüe</title>
+  
+  <!-- Iconos de FontAwesome para una interfaz premium -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Hoja de Estilos de Diseño Futurista 3D -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Elementos de profundidad ambiental 3D en el fondo -->
+  <div class="ambient-shape shape-1"></div>
+  <div class="ambient-shape shape-2"></div>
+
+  <!-- Contenedor Principal de Escritorio -->
+  <div id="app-container">
+    
+    <!-- MENU LATERAL DE CONTROL (BOTES DE NAVEGACIÓN) -->
+    <aside>
+      <div class="logo-container">
+        <!-- Holograma de Cubo 3D Animado -->
+        <div class="cube-hologram">
+          <div class="cube-face face-front"></div>
+          <div class="cube-face face-back"></div>
+          <div class="cube-face face-right"></div>
+          <div class="cube-face face-left"></div>
+          <div class="cube-face face-top"></div>
+          <div class="cube-face face-bottom"></div>
+        </div>
+        <div class="logo-text">
+          <h1>Bilingual</h1>
+          <span>Tech Assistant v1.0</span>
+        </div>
+      </div>
+
+      <!-- Botes de Navegación del Sistema -->
+      <nav class="nav-menu">
+        <li class="nav-item">
+          <div class="nav-link active" id="nav-home" data-view="home">
+            <i class="fa-solid fa-satellite-dish"></i>
+            <span>Buscador / Inicio</span>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="nav-link" id="nav-list" data-view="list">
+            <i class="fa-solid fa-folder-tree"></i>
+            <span>Lista de Términos</span>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="nav-link" id="nav-add" data-view="add">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span>Añadir Término</span>
+          </div>
+        </li>
+        <li class="nav-item">
+          <div class="nav-link" id="nav-favorites" data-view="favorites">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>Mis Favoritos</span>
+          </div>
+        </li>
+      </nav>
+
+      <!-- Panel de Autenticación de Usuario -->
+      <div class="user-panel">
+        <!-- Perfil Activo (Oculto por defecto si no hay sesión) -->
+        <div class="user-profile-summary" id="user-profile" style="display: none;">
+          <div class="avatar" id="user-avatar">U</div>
+          <div class="user-info-text">
+            <div class="user-name" id="user-display-name">Invitado</div>
+            <span class="user-role"><i class="fa-solid fa-shield-halved"></i> Estudiante</span>
+          </div>
+        </div>
+        <!-- Botón de Acción Auth -->
+        <button class="btn-auth-trigger" id="btn-auth-action">
+          <i class="fa-solid fa-user-astronaut"></i>
+          <span id="auth-btn-text">Iniciar Sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- AREA DE CONTENIDO PRINCIPAL -->
+    <main>
+      
+      <!-- CABECERA: TITULO Y CONTROLES DE BÚSQUEDA -->
+      <header>
+        <div class="header-title-area">
+          <h2 id="view-title">Portal de Terminología</h2>
+          <p id="view-subtitle">Explora el significado real y contextual de palabras técnicas en inglés.</p>
+        </div>
+
+        <!-- Buscador Reactivo -->
+        <div class="search-controls" id="search-controls-wrapper">
+          <div class="search-box-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Buscar término en inglés o español (Ej: 'String', 'Hilo')...">
+          </div>
+          
+          <!-- Botón Configuración de Base de Datos -->
+          <button class="btn-config-db" id="btn-open-config" title="Configurar Firebase Cloud">
+            <i class="fa-solid fa-network-wired"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- BOTES SELECTORES DE CATEGORÍA -->
+      <div class="categories-container" id="categories-filter-bar">
+        <span class="category-chip active" data-category="all">Todos</span>
+        <span class="category-chip" data-category="logic">Lógica</span>
+        <span class="category-chip" data-category="oop">POO (Objetos)</span>
+        <span class="category-chip" data-category="database">Bases de Datos</span>
+        <span class="category-chip" data-category="networks">Redes y APIs</span>
+        <span class="category-chip" data-category="systems">Sistemas</span>
+        <span class="category-chip" data-category="backend">Backend</span>
+      </div>
+
+      <!-- ====================================================================
+           VISTA 1: BUSCADOR / INICIO (GRID DE TARJETAS 3D)
+           ==================================================================== -->
+      <div class="app-view active" id="view-home">
+        <div class="terms-grid" id="terms-grid-home">
+          <!-- Las tarjetas de términos se renderizan dinámicamente mediante app.js -->
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VISTA 2: LISTA DE TÉRMINOS (DATA GRID DE COMPUTADORA COMPLETA)
+           ==================================================================== -->
+      <div class="app-view" id="view-list">
+        <div class="terms-table-card">
+          <div class="table-header-bar">
+            <div class="table-title"><i class="fa-solid fa-server"></i> Directorio de Conceptos</div>
+            <span class="table-stats" id="table-total-count">0 Términos</span>
+          </div>
+          <div class="terms-table-wrapper">
+            <table class="terms-table">
+              <thead>
+                <tr>
+                  <th>Término en Inglés</th>
+                  <th>Significado en Español</th>
+                  <th>Categoría</th>
+                  <th>Descripción Corta</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="terms-table-body">
+                <!-- Se inyecta dinámicamente desde app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VISTA 3: AÑADIR TÉRMINOS (FORMULARIO EN INICIO)
+           ==================================================================== -->
+      <div class="app-view" id="view-add">
+        <div class="form-card-container">
+          <div class="form-glass-card">
+            <div class="form-header-area">
+              <h3><i class="fa-solid fa-square-plus text-cyan"></i> Insertar Nuevo Término</h3>
+              <p>Aporta a la base de datos técnica. Todos los usuarios registrados podrán visualizar tus contribuciones.</p>
+            </div>
+            
+            <form class="cyber-form" id="form-add-term" onsubmit="return false;">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="input-english">Término en Inglés *</label>
+                  <input type="text" class="form-control" id="input-english" placeholder="Ej: Thread" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="input-spanish">Traducción al Español *</label>
+                  <input type="text" class="form-control" id="input-spanish" placeholder="Ej: Hilo de ejecución" required>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="select-category">Categoría Técnica *</label>
+                  <select class="form-control" id="select-category" required>
+                    <option value="" disabled selected>Selecciona categoría...</option>
+                    <option value="logic">Lógica y Algoritmos</option>
+                    <option value="oop">POO (Programación Orientada a Objetos)</option>
+                    <option value="database">Bases de Datos</option>
+                    <option value="networks">Redes y APIs</option>
+                    <option value="systems">Sistemas y Arquitectura</option>
+                    <option value="backend">Desarrollo Backend / Frameworks</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="input-meaning">Significado Técnico Directo *</label>
+                  <input type="text" class="form-control" id="input-meaning" placeholder="Ej: Unidad de procesamiento más pequeña del SO..." required>
+                </div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label class="form-label" for="input-explanation">Explicación Sencilla para Estudiantes (Español)</label>
+                <textarea class="form-control" id="input-explanation" placeholder="Explica de forma cotidiana y comprensible cómo se diferencia de un término común..."></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="input-code-py"><i class="fa-brands fa-python"></i> Código de Ejemplo en Python</label>
+                  <textarea class="form-control code-input" id="input-code-py" placeholder="# Escribe código aquí..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="input-code-java"><i class="fa-brands fa-java"></i> Código de Ejemplo en Java</label>
+                  <textarea class="form-control code-input" id="input-code-java" placeholder="// Escribe código aquí..."></textarea>
+                </div>
+              </div>
+
+              <div class="form-submit-row">
+                <button type="reset" class="btn-form-secondary" id="btn-reset-form">Limpiar Campos</button>
+                <button type="submit" class="btn-form-primary" id="btn-submit-term">Registrar Término</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           VISTA 4: MIS FAVORITOS (GRID DE TARJETAS GUARDADAS)
+           ==================================================================== -->
+      <div class="app-view" id="view-favorites">
+        <!-- Renderizado dinámico de favoritos -->
+        <div class="terms-grid" id="terms-grid-favorites"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ========================================================================
+       MODALES HOLOGRÁFICOS FLOTANTES
+       ======================================================================== -->
+
+  <!-- 1. MODAL: AUTENTICACIÓN (LOGIN & REGISTRO) -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="hologram-modal">
+      <div class="modal-header">
+        <h4><i class="fa-solid fa-user-shield"></i> Portal de Estudiantes</h4>
+        <button class="btn-modal-close" onclick="closeModal('modal-auth')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <!-- Pestañas Auth -->
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+          <button class="auth-tab-btn" id="tab-register" onclick="switchAuthTab('register')">Registrarse</button>
+        </div>
+
+        <!-- Panel Login -->
+        <div class="auth-form-panel active" id="panel-login">
+          <form id="form-login" onsubmit="return false;">
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="login-email" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="login-password" placeholder="Mínimo 6 caracteres" required>
+            </div>
+            <small style="color: var(--text-muted); display: block; margin-bottom: 20px;">* Contraseña de desarrollo: <strong>123456</strong></small>
+            <button type="submit" class="btn-auth-submit" id="btn-login-submit">Conectar Cuenta</button>
+          </form>
+        </div>
+
+        <!-- Panel Registro -->
+        <div class="auth-form-panel" id="panel-register">
+          <form id="form-register" onsubmit="return false;">
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label class="form-label">Nombre del Estudiante</label>
+              <input type="text" class="form-control" id="register-name" placeholder="Tu Nombre Completo" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="register-email" placeholder="estudiante@correo.com" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="register-password" placeholder="Elige contraseña segura" required>
+            </div>
+            <button type="submit" class="btn-auth-submit" id="btn-register-submit">Crear Credenciales</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL: CONFIGURAR CONEXIÓN CON FIREBASE -->
+  <div class="modal-overlay" id="modal-config">
+    <div class="hologram-modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <h4><i class="fa-solid fa-gears"></i> Servidor Base de Datos</h4>
+        <button class="btn-modal-close" onclick="closeModal('modal-config')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Indicador de Estado de la DB -->
+        <div class="db-indicator-box mock-active" id="db-indicator-container">
+          <div class="indicator-dot"></div>
+          <div>
+            <div class="db-status-title" id="db-status-title">Base de datos Local Activa</div>
+            <div class="db-status-desc" id="db-status-desc">Usando almacenamiento del navegador (LocalStorage). Seguro y sin internet.</div>
+          </div>
+        </div>
+
+        <form id="form-firebase-config" onsubmit="return false;">
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.4;">
+            Puedes enlazar este asistente con tu proyecto en la nube de <strong>Firebase Cloud</strong> para sincronizar los datos en tiempo real entre múltiples dispositivos. Deja vacío para volver al modo local.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">API Key</label>
+            <input type="text" class="form-control code-input" id="cfg-api-key" placeholder="AIzaSyA1...">
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">Project ID</label>
+            <input type="text" class="form-control code-input" id="cfg-project-id" placeholder="mi-asistente-bilingue">
+          </div>
+          <div class="form-row" style="margin-bottom: 20px;">
+            <div class="form-group">
+              <label class="form-label">Auth Domain</label>
+              <input type="text" class="form-control code-input" id="cfg-auth-domain" placeholder="id.firebaseapp.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">App ID</label>
+              <input type="text" class="form-control code-input" id="cfg-app-id" placeholder="1:12345:web:abcd...">
+            </div>
+          </div>
+
+          <div class="form-submit-row">
+            <button type="button" class="btn-form-secondary" onclick="clearFirebaseConfig()">Restaurar Local</button>
+            <button type="submit" class="btn-form-primary" id="btn-save-config">Vincular Firebase</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIÓN DE COMUNICACIONES -->
+  <div id="toast-notification">
+    <i class="fa-solid fa-shield-halved"></i>
+    <span id="toast-message">Notificación del sistema activo.</span>
+  </div>
+
+  <!-- ========================================================================
+       INCLUSIÓN DE SCRIPTS
+       ======================================================================== -->
+  <!-- Firebase Compat SDKs (Capacidad offline y compatibilidad local) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <!-- 1. Base de datos inicial (terms-data.js) -->
+  <script src="terms-data.js"></script>
+  
+  <!-- 2. Adaptador Firebase / LocalStorage (firebase-config.js) -->
+  <script src="firebase-config.js"></script>
+  
+  <!-- 3. Lógica principal de UI y comportamiento (app.js) -->
+  <script src="app.js"></script>
+
+</body>
+</html>
