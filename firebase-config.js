@@ -8,10 +8,10 @@
 // en todos los dispositivos de tus estudiantes sin tener que configurarlo a mano.
 // --------------------------------------------------------------------------
 const FIREBASE_DEFAULT_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  appId: ""
+  apiKey: "AIzaSyDvwwpqaQoA_mBLq6QFnoXvjtEeIKy-JVA",
+  authDomain: "bilingual-tech-assistant.firebaseapp.com",
+  projectId: "bilingual-tech-assistant",
+  appId: "1:130221492619:web:5667481447a2f689d2c78e"
 };
 
 class FirebaseBridge {
