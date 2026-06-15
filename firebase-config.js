@@ -2,6 +2,18 @@
 // Este archivo actúa como un puente inteligente. Si el usuario ingresa credenciales reales de Firebase,
 // la aplicación se conecta a Firebase Auth y Firebase Realtime Database en tiempo real. Si no, funciona localmente.
 
+// --------------------------------------------------------------------------
+// CONFIGURACIÓN PREDETERMINADA DE FIREBASE (HARDCODEADA)
+// Coloca tus credenciales aquí para que la app se conecte automáticamente
+// en todos los dispositivos de tus estudiantes sin tener que configurarlo a mano.
+// --------------------------------------------------------------------------
+const FIREBASE_DEFAULT_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  appId: ""
+};
+
 class FirebaseBridge {
   constructor() {
     this.useMock = true;
@@ -25,12 +37,19 @@ class FirebaseBridge {
   }
 
   init() {
-    // Intentar leer la configuración guardada en LocalStorage
+    // Intentar leer la configuración guardada en LocalStorage o usar la predeterminada hardcodeada
+    let configToUse = null;
     const savedConfig = localStorage.getItem('firebase_config');
     
-    if (savedConfig && window.firebase) {
+    if (savedConfig) {
+      configToUse = JSON.parse(savedConfig);
+    } else if (FIREBASE_DEFAULT_CONFIG && FIREBASE_DEFAULT_CONFIG.apiKey && FIREBASE_DEFAULT_CONFIG.projectId) {
+      configToUse = FIREBASE_DEFAULT_CONFIG;
+    }
+    
+    if (configToUse && window.firebase) {
       try {
-        this.config = JSON.parse(savedConfig);
+        this.config = configToUse;
         
         // Inicializar Firebase SDK si no ha sido inicializado antes
         if (window.firebase.apps.length === 0) {
