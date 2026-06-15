@@ -97,6 +97,11 @@ function switchView(viewId) {
       viewTitle.innerHTML = '<i class="fa-solid fa-heart-pulse text-magenta"></i> Términos Favoritos';
       viewSubtitle.textContent = 'Tus conceptos guardados para repaso y consulta veloz.';
       break;
+      
+    case 'my-terms':
+      viewTitle.innerHTML = '<i class="fa-solid fa-book-bookmark text-cyan"></i> Términos Añadidos';
+      viewSubtitle.textContent = 'Administra los conceptos técnicos que has aportado a la base de datos.';
+      break;
   }
 
   // Refrescar renderizado al cambiar de vista
@@ -139,6 +144,15 @@ function getFilteredTerms() {
     terms = terms.filter(t => favs.includes(t.id));
   }
 
+  // Filtrado exclusivo de Términos Añadidos
+  if (activeView === 'my-terms') {
+    if (window.FirebaseService.currentUser) {
+      terms = terms.filter(t => t.createdBy === window.FirebaseService.currentUser.uid);
+    } else {
+      terms = [];
+    }
+  }
+
   return terms;
 }
 
@@ -155,6 +169,8 @@ function renderAllViews() {
     renderTable(filtered);
   } else if (activeView === 'favorites') {
     renderGrid(filtered, 'terms-grid-favorites');
+  } else if (activeView === 'my-terms') {
+    renderGrid(filtered, 'terms-grid-my-terms');
   }
 }
 
@@ -172,7 +188,7 @@ function renderGrid(terms, containerId) {
 
   terms.forEach(term => {
     const isFav = favorites.includes(term.id);
-    const isCustom = term.id.startsWith('custom_');
+    const isCustom = !!term.createdBy;
     const isCreator = isCustom && window.FirebaseService.currentUser && term.createdBy === window.FirebaseService.currentUser.uid;
     
     const cardHTML = `
@@ -277,7 +293,7 @@ function renderTable(terms) {
   }
 
   terms.forEach(term => {
-    const isCustom = term.id.startsWith('custom_');
+    const isCustom = !!term.createdBy;
     const row = `
       <tr>
         <td class="term-name-td">${term.english}</td>
@@ -469,8 +485,8 @@ function handleAuthStateChange(user) {
     userProfile.style.display = 'none';
     authBtnText.textContent = "Iniciar Sesión";
     
-    // Si estábamos en Favoritos o Añadir, y cerramos sesión, devolver a inicio
-    if (activeView === 'favorites' || activeView === 'add') {
+    // Si estábamos en Favoritos, Añadir o Términos Añadidos, y cerramos sesión, devolver a inicio
+    if (activeView === 'favorites' || activeView === 'add' || activeView === 'my-terms') {
       switchView('home');
     }
   }
