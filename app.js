@@ -8,6 +8,7 @@ let activeCategory = 'all';
 let searchQuery = '';
 let currentAuthTab = 'login';
 let termCardsTiltListeners = []; // Para limpiar listeners si es necesario
+let editingTermId = null; // ID del término que se está editando
 
 // --- INICIALIZACIÓN DEL SISTEMA ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,6 +35,10 @@ function initRouting() {
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       const viewId = link.getAttribute('data-view');
+      // Cancelar edición si el usuario navega a través del menú lateral
+      if (viewId === 'add') {
+        cancelEditMode();
+      }
       switchView(viewId);
     });
   });
@@ -179,7 +184,10 @@ function renderGrid(terms, containerId) {
             <div class="card-header">
               <span class="category-tag tag-${term.category}">${getCategoryLabel(term.category)}</span>
               <div class="card-actions">
-                ${isCreator ? `<button class="btn-card-action btn-delete" onclick="handleDeleteTerm('${term.id}', event)" title="Borrar tu término"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                ${isCreator ? `
+                  <button class="btn-card-action btn-edit" onclick="handleEditTerm('${term.id}', event)" title="Editar tu término"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button class="btn-card-action btn-delete" onclick="handleDeleteTerm('${term.id}', event)" title="Borrar tu término"><i class="fa-solid fa-trash-can"></i></button>
+                ` : ''}
                 <button class="btn-card-action btn-fav ${isFav ? 'active' : ''}" onclick="handleToggleFavorite('${term.id}', event)">
                   <i class="fa-solid fa-heart"></i>
                 </button>
@@ -577,6 +585,63 @@ async function handleDeleteTerm(termId, event) {
   }
 }
 
+// Iniciar flujo de edición prellenando el formulario
+function handleEditTerm(termId, event) {
+  if (event) event.stopPropagation(); // Evitar voltear la tarjeta
+  
+  const combined = getCombinedTerms();
+  const term = combined.find(t => t.id === termId);
+  if (!term) return;
+
+  editingTermId = termId;
+
+  // Rellenar formulario con los datos actuales
+  document.getElementById('input-english').value = term.english;
+  document.getElementById('input-spanish').value = term.spanish;
+  document.getElementById('select-category').value = term.category;
+  document.getElementById('input-meaning').value = term.meaning;
+  
+  // Limpiar descripciones/códigos predeterminados para mayor comodidad del usuario
+  document.getElementById('input-explanation').value = 
+    term.explanation === "Término aportado por la comunidad de estudiantes." ? "" : term.explanation;
+  
+  const isDefaultPy = term.codePython === "# Ejemplo de sintaxis no disponible en Python" || term.codePython.startsWith("# Ejemplo de sintaxis no disponible");
+  document.getElementById('input-code-py').value = isDefaultPy ? "" : term.codePython;
+  
+  const isDefaultJava = term.codeJava === "// Ejemplo de sintaxis no disponible en Java" || term.codeJava.startsWith("// Ejemplo de sintaxis no disponible");
+  document.getElementById('input-code-java').value = isDefaultJava ? "" : term.codeJava;
+
+  // Cambiar elementos de la interfaz al modo edición
+  document.querySelector('#view-add .form-header-area h3').innerHTML = '<i class="fa-solid fa-pen-to-square text-cyan"></i> Editar Término';
+  document.querySelector('#view-add .form-header-area p').textContent = 'Modifica los datos del término que subiste anteriormente. Los cambios se guardarán.';
+  document.getElementById('btn-submit-term').textContent = 'Guardar Cambios';
+  document.getElementById('btn-reset-form').textContent = 'Cancelar Edición';
+
+  // Cambiar pestaña del SPA
+  switchView('add');
+  
+  // Re-ajustar cabecera dinámica de forma personalizada
+  document.getElementById('view-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-cyan"></i> Editar Concepto';
+  document.getElementById('view-subtitle').textContent = 'Modifica un término técnico que hayas agregado.';
+}
+
+// Cancelar edición y restaurar textos originales del formulario
+function cancelEditMode() {
+  editingTermId = null;
+  const form = document.getElementById('form-add-term');
+  if (form) form.reset();
+  
+  const h3 = document.querySelector('#view-add .form-header-area h3');
+  const p = document.querySelector('#view-add .form-header-area p');
+  const submitBtn = document.getElementById('btn-submit-term');
+  const resetBtn = document.getElementById('btn-reset-form');
+  
+  if (h3) h3.innerHTML = '<i class="fa-solid fa-square-plus text-cyan"></i> Insertar Nuevo Término';
+  if (p) p.textContent = 'Aporta a la base de datos técnica. Todos los usuarios registrados podrán visualizar tus contribuciones.';
+  if (submitBtn) submitBtn.textContent = 'Registrar Término';
+  if (resetBtn) resetBtn.textContent = 'Limpiar Campos';
+}
+
 // ==========================================================================
 // 7. CONFIGURACIÓN DE FIREBASE (SETTINGS VIEW/MODAL)
 // ==========================================================================
@@ -688,7 +753,21 @@ function initSearchAndFilterEvents() {
 function initFormEvents() {
   const form = document.getElementById('form-add-term');
   
-  form.addEventListener('submit', async () => {
+  // Manejar botón Cancelar / Limpiar en modo edición
+  const btnReset = document.getElementById('btn-reset-form');
+  if (btnReset) {
+    btnReset.addEventListener('click', (e) => {
+      if (editingTermId) {
+        e.preventDefault(); // Evitar el reset del form manual si cancelamos
+        cancelEditMode();
+        switchView('home');
+      }
+    });
+  }
+  
+  form.addEventListener('submit', async (e) => {
+    if (e) e.preventDefault(); // Detener envío por defecto
+    
     const english = document.getElementById('input-english').value;
     const spanish = document.getElementById('input-spanish').value;
     const category = document.getElementById('select-category').value;
@@ -699,34 +778,59 @@ function initFormEvents() {
 
     const btnSubmit = document.getElementById('btn-submit-term');
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
+    
+    if (editingTermId) {
+      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+      try {
+        await window.FirebaseService.updateCustomTerm(editingTermId, {
+          english,
+          spanish,
+          category,
+          meaning,
+          explanation: explanation || undefined,
+          codePython: codePy || undefined,
+          codeJava: codeJava || undefined
+        });
 
-    try {
-      await window.FirebaseService.addCustomTerm({
-        english,
-        spanish,
-        category,
-        meaning,
-        explanation: explanation || undefined,
-        codePython: codePy || undefined,
-        codeJava: codeJava || undefined
-      });
-
-      showToast(`¡Término "${english}" guardado exitosamente!`, "success");
-      form.reset();
-      
-      // Devolver al buscador para visualizar el nuevo término
-      switchView('home');
-    } catch (error) {
-      showToast(error.message, "error");
-      
-      // Si requiere inicio de sesión, abrir modal automáticamente
-      if (error.message.includes("iniciar sesión")) {
-        openModal('modal-auth');
+        showToast(`¡Término "${english}" actualizado exitosamente!`, "success");
+        cancelEditMode();
+        switchView('home');
+      } catch (error) {
+        showToast(error.message, "error");
+        if (error.message.includes("iniciar sesión")) {
+          openModal('modal-auth');
+        }
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Guardar Cambios";
       }
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Registrar Término";
+    } else {
+      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registrando...';
+      try {
+        await window.FirebaseService.addCustomTerm({
+          english,
+          spanish,
+          category,
+          meaning,
+          explanation: explanation || undefined,
+          codePython: codePy || undefined,
+          codeJava: codeJava || undefined
+        });
+
+        showToast(`¡Término "${english}" guardado exitosamente!`, "success");
+        form.reset();
+        switchView('home');
+      } catch (error) {
+        showToast(error.message, "error");
+        
+        // Si requiere inicio de sesión, abrir modal automáticamente
+        if (error.message.includes("iniciar sesión")) {
+          openModal('modal-auth');
+        }
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Registrar Término";
+      }
     }
   });
 }

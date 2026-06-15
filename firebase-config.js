@@ -406,6 +406,73 @@ class FirebaseBridge {
     }
   }
 
+  // Actualizar un término personalizado
+  async updateCustomTerm(termId, term) {
+    if (!this.currentUser) {
+      throw new Error("Debes iniciar sesión para editar términos.");
+    }
+
+    if (!term.english || !term.spanish || !term.meaning || !term.category) {
+      throw new Error("Todos los campos obligatorios deben completarse.");
+    }
+
+    if (this.useMock) {
+      await new Promise(r => setTimeout(r, 400));
+      const customTerms = JSON.parse(localStorage.getItem('mock_custom_terms'));
+      const index = customTerms.findIndex(t => t.id === termId);
+
+      if (index === -1) throw new Error("El término no existe.");
+      if (customTerms[index].createdBy !== this.currentUser.uid) {
+        throw new Error("Solo el creador puede editar este término.");
+      }
+
+      customTerms[index] = {
+        ...customTerms[index],
+        english: term.english,
+        spanish: term.spanish,
+        category: term.category,
+        meaning: term.meaning,
+        explanation: term.explanation || "Término aportado por la comunidad de estudiantes.",
+        codePython: term.codePython || "# Ejemplo de sintaxis no disponible en Python",
+        codeJava: term.codeJava || "// Ejemplo de sintaxis no disponible en Java",
+        updatedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('mock_custom_terms', JSON.stringify(customTerms));
+      
+      if (window.renderAllViews) window.renderAllViews();
+      return customTerms[index];
+    } else {
+      // Modificar en Realtime Database Cloud
+      try {
+        const termRef = this.db.ref('custom_terms').child(termId);
+        const snapshot = await termRef.once('value');
+        
+        if (!snapshot.exists()) throw new Error("El término no existe.");
+        if (snapshot.val().createdBy !== this.currentUser.uid) {
+          throw new Error("Solo el creador puede editar este término.");
+        }
+
+        const updatedTerm = {
+          ...snapshot.val(),
+          english: term.english,
+          spanish: term.spanish,
+          category: term.category,
+          meaning: term.meaning,
+          explanation: term.explanation || "Término aportado por la comunidad de estudiantes.",
+          codePython: term.codePython || "# Ejemplo de sintaxis no disponible en Python",
+          codeJava: term.codeJava || "// Ejemplo de sintaxis no disponible en Java",
+          updatedAt: new Date().toISOString()
+        };
+
+        await termRef.set(updatedTerm);
+        return updatedTerm;
+      } catch (error) {
+        throw new Error("Error al editar en la nube: " + error.message);
+      }
+    }
+  }
+
   // Eliminar un término personalizado
   async deleteCustomTerm(termId) {
     if (!this.currentUser) {

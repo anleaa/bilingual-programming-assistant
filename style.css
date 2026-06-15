@@ -5,32 +5,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Paleta de Colores de Neón */
-  --bg-primary: #050811;
-  --bg-secondary: #0a0f1d;
-  --bg-surface: #0e162b;
-  --bg-glass: rgba(10, 15, 29, 0.65);
-  --bg-glass-heavy: rgba(7, 10, 19, 0.85);
+  /* Paleta de Colores Profesional Slate / Azul Muted */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-surface: #1e293b;
+  --bg-glass: rgba(30, 41, 59, 0.7);
+  --bg-glass-heavy: rgba(15, 23, 42, 0.85);
   
-  --accent-cyan: #00f2fe;
-  --accent-cyan-glow: rgba(0, 242, 254, 0.35);
-  --accent-magenta: #ff007f;
-  --accent-magenta-glow: rgba(255, 0, 127, 0.3);
-  --accent-purple: #8a2be2;
-  --accent-purple-glow: rgba(138, 43, 226, 0.3);
-  --accent-green: #00ff87;
-  --accent-green-glow: rgba(0, 255, 135, 0.3);
+  --accent-cyan: #38bdf8;
+  --accent-cyan-glow: rgba(56, 189, 248, 0.15);
+  --accent-magenta: #f43f5e;
+  --accent-magenta-glow: rgba(244, 63, 94, 0.15);
+  --accent-purple: #a78bfa;
+  --accent-purple-glow: rgba(167, 139, 250, 0.15);
+  --accent-green: #34d399;
+  --accent-green-glow: rgba(52, 211, 153, 0.15);
   
   --text-primary: #ffffff;
-  --text-secondary: #8da2c4;
-  --text-muted: #4e6180;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
   
-  --border-glow: rgba(0, 242, 254, 0.2);
-  --border-glow-magenta: rgba(255, 0, 127, 0.2);
-  --border-cyan-bright: #00f2fe;
+  --border-glow: rgba(148, 163, 184, 0.15);
+  --border-glow-magenta: rgba(244, 63, 94, 0.15);
+  --border-cyan-bright: #38bdf8;
   
-  --shadow-neon-cyan: 0 0 20px rgba(0, 242, 254, 0.25);
-  --shadow-neon-magenta: 0 0 20px rgba(255, 0, 127, 0.25);
+  --shadow-neon-cyan: 0 4px 12px rgba(56, 189, 248, 0.12);
+  --shadow-neon-magenta: 0 4px 12px rgba(244, 63, 94, 0.12);
   
   --font-sans: 'Outfit', sans-serif;
   --font-mono: 'Fira Code', monospace;
@@ -59,9 +59,8 @@ body {
   overflow-x: hidden;
   position: relative;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 40%);
   background-attachment: fixed;
 }
 
@@ -74,15 +73,15 @@ body::before {
   width: 100%;
   height: 100%;
   background-image: 
-    linear-gradient(rgba(0, 242, 254, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 242, 254, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(148, 163, 184, 0.007) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.007) 1px, transparent 1px);
   background-size: 50px 50px;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Efecto de línea de escaneo sutil (CRT Cyberpunk) */
-body::after {
+/* Efecto de línea de escaneo sutil (CRT Cyberpunk) - Removido por generar ruido visual */
+/* body::after {
   content: " ";
   display: block;
   position: fixed;
@@ -91,7 +90,7 @@ body::after {
   z-index: 9999;
   background-size: 100% 4px, 3px 100%;
   pointer-events: none;
-}
+} */
 
 /* Personalización del Scrollbar */
 ::-webkit-scrollbar {
@@ -363,6 +362,7 @@ header {
   justify-content: space-between;
   align-items: center;
   gap: 30px;
+  flex-shrink: 0;
 }
 
 .header-title-area h2 {
@@ -452,7 +452,14 @@ header {
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  overflow-y: hidden;
+  padding: 10px 4px 20px 4px;
+  flex-shrink: 0;
+  scrollbar-width: none; /* Firefox */
+}
+
+.categories-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Webkit */
 }
 
 .category-chip {
@@ -491,7 +498,7 @@ header {
 /* Contenedor de Perspectiva 3D */
 .term-card-container {
   perspective: 1200px;
-  min-height: 280px;
+  height: 350px; /* Altura fija para alineación perfecta */
 }
 
 /* Tarjeta 3D Rotativa */
@@ -501,7 +508,6 @@ header {
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
-  min-height: 280px;
 }
 
 .term-card.flipped {
@@ -531,8 +537,8 @@ header {
 }
 
 .card-front:hover, .card-back:hover {
-  border-color: rgba(0, 242, 254, 0.35);
-  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 15px 35px rgba(56, 189, 248, 0.08);
 }
 
 .card-back {
@@ -558,12 +564,12 @@ header {
 }
 
 /* Colores Dinámicos de Categorías */
-.tag-logic { background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.2); }
-.tag-oop { background: rgba(255, 0, 127, 0.1); color: var(--accent-magenta); border: 1px solid rgba(255, 0, 127, 0.2); }
-.tag-database { background: rgba(138, 43, 226, 0.15); color: #be8eff; border: 1px solid rgba(138, 43, 226, 0.25); }
-.tag-networks { background: rgba(0, 255, 135, 0.1); color: var(--accent-green); border: 1px solid rgba(0, 255, 135, 0.2); }
-.tag-systems { background: rgba(255, 165, 0, 0.1); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.2); }
-.tag-backend { background: rgba(255, 235, 59, 0.1); color: #ffeb3b; border: 1px solid rgba(255, 235, 59, 0.2); }
+.tag-logic { background: rgba(56, 189, 248, 0.08); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.15); }
+.tag-oop { background: rgba(244, 63, 94, 0.08); color: var(--accent-magenta); border: 1px solid rgba(244, 63, 94, 0.15); }
+.tag-database { background: rgba(167, 139, 250, 0.08); color: var(--accent-purple); border: 1px solid rgba(167, 139, 250, 0.15); }
+.tag-networks { background: rgba(52, 211, 153, 0.08); color: var(--accent-green); border: 1px solid rgba(52, 211, 153, 0.15); }
+.tag-systems { background: rgba(245, 158, 11, 0.08); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.15); }
+.tag-backend { background: rgba(234, 179, 8, 0.08); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.15); }
 
 .card-actions {
   display: flex;
@@ -601,6 +607,7 @@ header {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex-grow: 1; /* Permite estirar para alinear el footer */
 }
 
 .term-title {
@@ -636,7 +643,7 @@ header {
   align-items: center;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 15px;
-  margin-top: 10px;
+  margin-top: auto; /* Empuja el footer al final de la tarjeta */
 }
 
 .creator-tag {
@@ -650,7 +657,7 @@ header {
 }
 
 .btn-flip-trigger {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.1) 0%, rgba(138, 43, 226, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(167, 139, 250, 0.08) 100%);
   border: 1px solid var(--border-glow);
   color: var(--accent-cyan);
   padding: 8px 16px;
@@ -667,7 +674,7 @@ header {
 .btn-flip-trigger:hover {
   background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
   color: #ffffff;
-  box-shadow: var(--shadow-neon-cyan);
+  box-shadow: 0 4px 10px rgba(56, 189, 248, 0.15);
   transform: translateY(-2px);
 }
 
