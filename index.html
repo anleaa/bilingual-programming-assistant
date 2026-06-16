@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Hoja de Estilos de Diseño Futurista 3D -->
-  <link rel="stylesheet" href="style.css?v=1.0.3">
+  <link rel="stylesheet" href="style.css?v=1.0.4">
 </head>
 <body>
 
@@ -22,6 +22,11 @@
     
     <!-- MENU LATERAL DE CONTROL (BOTES DE NAVEGACIÓN) -->
     <aside>
+      <!-- Botón de Menú Móvil de Tres Puntos -->
+      <button class="btn-mobile-toggle" id="btn-mobile-toggle" onclick="toggleMobileMenu(event)">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button>
+
       <div class="logo-container">
         <!-- Holograma de Cubo 3D Animado -->
         <div class="cube-hologram">
@@ -370,13 +375,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
   <!-- 1. Base de datos inicial (terms-data.js) -->
-  <script src="terms-data.js?v=1.0.3"></script>
+  <script src="terms-data.js?v=1.0.4"></script>
   
   <!-- 2. Adaptador Firebase / LocalStorage (firebase-config.js) -->
-  <script src="firebase-config.js?v=1.0.3"></script>
+  <script src="firebase-config.js?v=1.0.4"></script>
   
   <!-- 3. Lógica principal de UI y comportamiento (app.js) -->
-  <script src="app.js?v=1.0.3"></script>
+  <script src="app.js?v=1.0.4"></script>
 
 </body>
 </html>

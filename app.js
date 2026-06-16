@@ -101,7 +101,12 @@ function switchView(viewId) {
     case 'my-terms':
       viewTitle.innerHTML = '<i class="fa-solid fa-book-bookmark text-cyan"></i> Términos Añadidos';
       viewSubtitle.textContent = 'Administra los conceptos técnicos que has aportado a la base de datos.';
-      break;
+  }
+
+  // Cerrar el menú móvil al seleccionar una vista
+  const menu = document.querySelector('.nav-menu');
+  if (menu) {
+    menu.classList.remove('mobile-active');
   }
 
   // Refrescar renderizado al cambiar de vista
@@ -910,3 +915,25 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+// --- SOPORTE DE MENÚ MÓVIL (TRES PUNTOS) ---
+function toggleMobileMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.querySelector('.nav-menu');
+  if (menu) {
+    menu.classList.toggle('mobile-active');
+  }
+}
+
+// Cerrar menú móvil al hacer click fuera
+document.addEventListener('click', (e) => {
+  const menu = document.querySelector('.nav-menu');
+  const trigger = document.getElementById('btn-mobile-toggle');
+  if (menu && menu.classList.contains('mobile-active')) {
+    const isClickInsideMenu = menu.contains(e.target);
+    const isClickInsideTrigger = trigger && trigger.contains(e.target);
+    if (!isClickInsideMenu && !isClickInsideTrigger) {
+      menu.classList.remove('mobile-active');
+    }
+  }
+});
