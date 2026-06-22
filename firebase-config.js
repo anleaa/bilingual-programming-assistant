@@ -10,6 +10,7 @@
 const FIREBASE_DEFAULT_CONFIG = {
   apiKey: "AIzaSyDvwwpqaQoA_mBLq6QFnoXvjtEeIKy-JVA",
   authDomain: "bilingual-tech-assistant.firebaseapp.com",
+  databaseURL: "https://bilingual-tech-assistant-default-rtdb.firebaseio.com",
   projectId: "bilingual-tech-assistant",
   appId: "1:130221492619:web:5667481447a2f689d2c78e"
 };
