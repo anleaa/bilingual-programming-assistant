@@ -409,7 +409,7 @@ function flipCard(target, isFlip, event) {
     // Buscar por ID, preferiendo el de la vista activa si hay duplicados
     const activeViewEl = document.getElementById(`view-${activeView}`);
     if (activeViewEl) {
-      card = activeViewEl.querySelector(`[id="card-${target}"]`);
+      card = Array.from(activeViewEl.getElementsByClassName('term-card')).find(el => el.id === `card-${target}`);
     }
     if (!card) {
       card = document.getElementById(`card-${target}`);
@@ -541,6 +541,9 @@ function handleAuthStateChange(user) {
   const userDisplayName = document.getElementById('user-display-name');
   const authBtnText = document.getElementById('auth-btn-text');
 
+  const landingView = document.getElementById('landing-view');
+  const appContainer = document.getElementById('app-container');
+
   if (user) {
     // Configurar perfil visible
     userDisplayName.textContent = user.displayName;
@@ -548,13 +551,12 @@ function handleAuthStateChange(user) {
     userProfile.style.display = 'flex';
     authBtnText.textContent = "Cerrar Sesión";
     
-    // Ocultar pantalla de bienvenida automáticamente al iniciar sesión
-    const welcomeScreen = document.getElementById('welcome-screen');
-    if (welcomeScreen) {
-      welcomeScreen.classList.add('hidden');
+    // Ocultar landing page y revelar portal principal
+    if (landingView) {
+      landingView.style.display = 'none';
     }
-    const appContainer = document.getElementById('app-container');
     if (appContainer) {
+      appContainer.style.display = 'grid';
       appContainer.style.opacity = '1';
       appContainer.style.pointerEvents = 'auto';
     }
@@ -563,16 +565,24 @@ function handleAuthStateChange(user) {
     userProfile.style.display = 'none';
     authBtnText.textContent = "Iniciar Sesión";
     
-    // Si no está en modo invitado y no hay usuario, mostrar la pantalla de bienvenida
+    // Si no está en modo invitado y no hay usuario, mostrar la landing page
     if (!isGuestMode) {
-      const welcomeScreen = document.getElementById('welcome-screen');
-      if (welcomeScreen) {
-        welcomeScreen.classList.remove('hidden');
+      if (landingView) {
+        landingView.style.display = 'block';
       }
-      const appContainer = document.getElementById('app-container');
       if (appContainer) {
-        appContainer.style.opacity = '0.08'; // Difuminado de fondo muy tenue
+        appContainer.style.display = 'none';
+        appContainer.style.opacity = '0.08';
         appContainer.style.pointerEvents = 'none';
+      }
+    } else {
+      if (landingView) {
+        landingView.style.display = 'none';
+      }
+      if (appContainer) {
+        appContainer.style.display = 'grid';
+        appContainer.style.opacity = '1';
+        appContainer.style.pointerEvents = 'auto';
       }
     }
     
@@ -1049,12 +1059,13 @@ function initWelcomeEvents() {
 
 function enterAppAsGuest() {
   isGuestMode = true;
-  const welcomeScreen = document.getElementById('welcome-screen');
-  if (welcomeScreen) {
-    welcomeScreen.classList.add('hidden');
+  const landingView = document.getElementById('landing-view');
+  if (landingView) {
+    landingView.style.display = 'none';
   }
   const appContainer = document.getElementById('app-container');
   if (appContainer) {
+    appContainer.style.display = 'grid';
     appContainer.style.opacity = '1';
     appContainer.style.pointerEvents = 'auto';
   }
@@ -1076,3 +1087,28 @@ function renderGuestOverlay(containerId, message) {
     </div>
   `;
 }
+
+// ==========================================================================
+// 12. SISTEMA DE MODALES DE INFORMACIÓN DE NAVEGACIÓN (CONTENT MODALS)
+// ==========================================================================
+
+function openContentModal(id) {
+  const modal = document.getElementById(`modal-${id}`);
+  if (modal) {
+    modal.classList.add('active');
+  }
+}
+
+function closeContentModal(id) {
+  const modal = document.getElementById(`modal-${id}`);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+// Cerrar modales al hacer clic fuera del contenido
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('content-modal')) {
+    e.target.classList.remove('active');
+  }
+});

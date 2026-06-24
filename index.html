@@ -17,52 +17,212 @@
   <div class="ambient-shape shape-1"></div>
   <div class="ambient-shape shape-2"></div>
 
-  <!-- PANTALLA DE BIENVENIDA / INICIO (WELCOME SCREEN) -->
-  <div id="welcome-screen">
-    <div class="welcome-container">
-      <div class="welcome-logo-area">
-        <!-- Holograma de Cubo 3D Animado -->
-        <div class="cube-hologram welcome-cube">
-          <div class="cube-face face-front"></div>
-          <div class="cube-face face-back"></div>
-          <div class="cube-face face-right"></div>
-          <div class="cube-face face-left"></div>
-          <div class="cube-face face-top"></div>
-          <div class="cube-face face-bottom"></div>
-        </div>
-        <h1 class="welcome-title">Bilingual Tech Assistant</h1>
-        <p class="welcome-tagline">El puente conceptual definitivo entre el inglés técnico y la programación real.</p>
-      </div>
+  <!-- ==========================================================================
+       LANDING PAGE VIEW (ESTILO STUDYNEST PREMIUM)
+       ========================================================================== -->
+  <div id="landing-view">
+    <!-- Sticky Glassmorphism Navbar -->
+    <nav class="navbar" id="navbar-top">
+      <div class="container navbar-container">
+        <!-- Logo con Isotipo de Cubo 3D -->
+        <a href="#" class="logo" id="main-logo-link">
+          <div class="cube-hologram welcome-cube" style="width: 32px; height: 32px; margin-bottom: 0;">
+            <div class="cube-face face-front"></div>
+            <div class="cube-face face-back"></div>
+            <div class="cube-face face-right"></div>
+            <div class="cube-face face-left"></div>
+            <div class="cube-face face-top"></div>
+            <div class="cube-face face-bottom"></div>
+          </div>
+          <span class="logo-text">
+            <span class="text-gradient-primary" style="font-weight: 800;">Bilingual</span><span style="color: #ffffff; font-weight: 500;">Tech</span>
+          </span>
+        </a>
 
-      <!-- Tarjetas de Características (Features) -->
-      <div class="welcome-features">
-        <div class="feature-box">
-          <i class="fa-solid fa-satellite-dish text-cyan"></i>
-          <h5>Buscador Real</h5>
-          <p>Evita traducciones literales incorrectas (ej. String, Array, Thread) con explicaciones didácticas.</p>
+        <!-- Enlaces de navegación interactivos -->
+        <ul class="nav-links">
+          <li><a href="#" onclick="openContentModal('recursos')">Recursos</a></li>
+          <li><a href="#" onclick="openContentModal('funcionamiento')">Funcionamiento</a></li>
+          <li><a href="#" onclick="openContentModal('colaboracion')">Colaboración</a></li>
+          <li><a href="#" onclick="openContentModal('blog')">Blog</a></li>
+        </ul>
+
+        <!-- Botón de CTA Conectar Cuenta -->
+        <button class="btn btn-primary" id="btn-navbar-register" onclick="openModal('modal-auth')">Conectar Cuenta</button>
+      </div>
+    </nav>
+
+    <!-- Sección Hero con mesh gradient -->
+    <section class="hero" id="hero-section">
+      <!-- 3D Floating Ambient Glow Orbs -->
+      <div class="orb-glow orb-glow-1"></div>
+      <div class="orb-glow orb-glow-2"></div>
+      <div class="orb-glow orb-glow-3"></div>
+      
+      <div class="container hero-grid">
+        <!-- Columna Izquierda: Copywriting -->
+        <div class="hero-left" id="hero-copy-container">
+          <h1 id="hero-main-title">“EL IDIOMA NO DEBE SER UNA BARRERA.<br>DOMINA EL LENGUAJE REAL<br><span class="text-gradient-primary">DE LA PROGRAMACIÓN.”</span></h1>
+          <p class="subtext" id="hero-subtext">Bienvenido al Asistente de Terminología Técnica Bilingüe. Un nido de conocimiento diseñado para dominar los conceptos reales de la programación sin traducciones literales incorrectas.</p>
+          <div class="btn-group" id="hero-cta-buttons">
+            <button class="btn btn-primary" id="btn-welcome-auth">Iniciar Sesión</button>
+            <button class="btn btn-secondary" id="btn-welcome-guest">Explorar como Invitado</button>
+          </div>
         </div>
-        <div class="feature-box">
-          <i class="fa-solid fa-code text-purple"></i>
-          <h5>Código Vivo</h5>
-          <p>Compara fragmentos interactivos de sintaxis real en Python y Java en el reverso de cada concepto.</p>
-        </div>
-        <div class="feature-box">
-          <i class="fa-solid fa-users text-magenta"></i>
-          <h5>Comunidad</h5>
-          <p>Regístrate para guardar tus favoritos en la nube y aportar tus propios términos al directorio técnico.</p>
+
+        <!-- Columna Derecha: Holograma del Cubo Grande -->
+        <div class="hero-right" id="hero-art-container">
+          <div class="cube-hologram" style="width: 150px; height: 150px; animation: rotateCube 15s infinite linear; filter: drop-shadow(0 0 30px rgba(56,189,248,0.25));">
+            <div class="cube-face face-front" style="width: 150px; height: 150px; transform: rotateY(0deg) translateZ(75px);"></div>
+            <div class="cube-face face-back" style="width: 150px; height: 150px; transform: rotateY(180deg) translateZ(75px); border-color: var(--accent-magenta); background: rgba(255, 0, 127, 0.05);"></div>
+            <div class="cube-face face-right" style="width: 150px; height: 150px; transform: rotateY(90deg) translateZ(75px);"></div>
+            <div class="cube-face face-left" style="width: 150px; height: 150px; transform: rotateY(-90deg) translateZ(75px);"></div>
+            <div class="cube-face face-top" style="width: 150px; height: 150px; transform: rotateX(90deg) translateZ(75px);"></div>
+            <div class="cube-face face-bottom" style="width: 150px; height: 150px; transform: rotateX(-90deg) translateZ(75px);"></div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- Botones de Acción (CTAs) -->
-      <div class="welcome-actions">
-        <button class="btn-welcome btn-student" id="btn-welcome-auth">
-          <i class="fa-solid fa-user-shield"></i>
-          <span>Conectar como Estudiante</span>
-        </button>
-        <button class="btn-welcome btn-guest" id="btn-welcome-guest">
-          <span>Explorar como Invitado</span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
+    <!-- feature cards -->
+    <section class="features-section" id="feature-cards-container">
+      <div class="container features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-satellite-dish"></i>
+          </div>
+          <h3>Buscador Técnico</h3>
+          <p>Filtra conceptos en tiempo real e identifica la traducción y el significado real en español sin traducciones literales erróneas.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <h3>Código Vivo</h3>
+          <p>Visualiza y compara ejemplos de sintaxis y código real en Python y Java en el reverso de cada concepto.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <h3>Sincronización Cloud</h3>
+          <p>Registra tus propios conceptos y sincronízalos en tiempo real en la nube para estudiar desde cualquier dispositivo.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modals de Enlaces de Navegación -->
+  <div class="content-modal" id="modal-recursos">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeContentModal('recursos')">✕</button>
+      <div class="modal-title-header">
+        <h2>Kit de Recursos de Estudio Técnico</h2>
+        <p>Herramientas y guías prácticas para optimizar tu aprendizaje y memorización.</p>
+      </div>
+      
+      <div class="resource-grid">
+        <div class="resource-card">
+          <h4>⏱️ Flashcards Técnicas</h4>
+          <p>Estudiar con el anverso y reverso de conceptos técnicos es ideal para la evocación activa (Active Recall). Te ayuda a recordar qué significa realmente un concepto en lugar de memorizar una definición.</p>
+        </div>
+        <div class="resource-card">
+          <h4>💡 Técnica de Feynman</h4>
+          <p>Explica un concepto técnico complejo (como Polimorfismo o Recursión) usando palabras tan sencillas como si se lo enseñaras a un niño. Detectarás tus vacíos de conocimiento al instante.</p>
+        </div>
+        <div class="resource-card">
+          <h4>🐍 Práctica Multilenguaje</h4>
+          <p>Comparar la sintaxis de un concepto en Python (dinámico y legible) y Java (estático y estructurado) te ayuda a entender los fundamentos del concepto por encima de las reglas del lenguaje.</p>
+        </div>
+        <div class="resource-card">
+          <h4>📋 Glosario Activo</h4>
+          <p>No te limites a leer definiciones. Intenta codificar un ejemplo sencillo que use el término para asimilar el concepto a nivel práctico.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-modal" id="modal-funcionamiento">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeContentModal('funcionamiento')">✕</button>
+      <div class="modal-title-header">
+        <h2>Cómo Funciona el Asistente</h2>
+        <p>Aprende a sacarle el máximo provecho a la plataforma en tu día a día académico.</p>
+      </div>
+      
+      <div style="margin-top:20px;">
+        <div class="guide-step">
+          <div class="guide-number">1</div>
+          <div>
+            <strong>Explora y Busca en Tiempo Real</strong>
+            <p>Escribe el concepto técnico que te causa dudas (ej. String, Thread). El buscador reactivo filtrará las tarjetas inmediatamente.</p>
+          </div>
+        </div>
+        
+        <div class="guide-step">
+          <div class="guide-number">2</div>
+          <div>
+            <strong>Voltea la Tarjeta (Ver Detalles)</strong>
+            <p>La cara frontal te muestra la definición formal. Haz clic en "Ver Detalles" para revelar una explicación informal y cotidiana con ejemplos de código.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="guide-number">3</div>
+          <div>
+            <strong>Registra tus Propias Aportaciones</strong>
+            <p>Conecta tu cuenta de estudiante para poder ingresar tus propios términos técnicos y compartirlos con el resto de la comunidad.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="guide-number">4</div>
+          <div>
+            <strong>Sincronización en la Nube</strong>
+            <p>Cualquier término que agregues o guardes en favoritos se sincronizará automáticamente en tiempo real usando Firebase Database.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-modal" id="modal-colaboracion">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeContentModal('colaboracion')">✕</button>
+      <div class="modal-title-header">
+        <h2>Código de Colaboración Estudiantil</h2>
+        <p>Normas éticas para enriquecer la base de datos de manera profesional y académica.</p>
+      </div>
+      
+      <div style="margin-top:20px; color:var(--text-secondary); font-size:15px; display:flex; flex-direction:column; gap:16px;">
+        <p>🤝 <strong>Aportes de Calidad:</strong> Cuando registres un nuevo término, asegúrate de que su definición sea precisa y su traducción al español sea la utilizada en el ámbito profesional de la informática.</p>
+        <p>💻 <strong>Código Validado:</strong> Los fragmentos de ejemplo en Python y Java que escribas deben ser sintácticamente correctos. Pruébalos antes de subirlos para asegurar que sean de utilidad para otros estudiantes.</p>
+        <p>🎨 <strong>Explicaciones Claras:</strong> Escribe explicaciones cotidianas y sencillas. Los ejemplos analógicos (como comparar un Array con una fila de casilleros) son excelentes para el aprendizaje.</p>
+        <p>⚖️ <strong>Respeto Intelectual:</strong> Comparte conceptos técnicos reales y de interés académico. Fomenta un ambiente de coworking y aprendizaje colaborativo sano.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-modal" id="modal-blog">
+    <div class="modal-sheet">
+      <button class="modal-close" onclick="closeContentModal('blog')">✕</button>
+      <div class="modal-title-header">
+        <h2>Blog de Terminología y Aprendizaje</h2>
+        <p>Lecturas seleccionadas para dominar el lenguaje del software y la ingeniería de datos.</p>
+      </div>
+      
+      <div style="margin-top:24px;">
+        <div class="blog-post">
+          <h4>Por qué las traducciones literales fallan en programación</h4>
+          <div class="blog-meta">Publicado por el Equipo de Desarrollo • 24 de Junio, 2026</div>
+          <p style="color:var(--text-secondary); font-size:14px;">Traducir "String" como "Cuerda" o "Array" como "Arreglo" en el sentido de reparar algo confunde a los estudiantes principiantes. Las palabras técnicas en informática tienen metáforas de diseño detrás de ellas. Conocer la metáfora real (un collar de cuentas para String, casilleros numerados para Array) acelera la comprensión de las estructuras de datos y mejora el pensamiento lógico.</p>
+        </div>
+        
+        <div class="blog-post">
+          <h4>La importancia de entender múltiples lenguajes simultáneamente</h4>
+          <div class="blog-meta">Publicado por Prof. Carlos Rivas • 15 de Junio, 2026</div>
+          <p style="color:var(--text-secondary); font-size:14px;">Aprender a programar enfocándose en un único lenguaje puede hacer que confundas los conceptos lógicos con las particularidades de ese lenguaje. Al contrastar Python (donde las listas son dinámicas y flexibles) con Java (donde los arrays tienen tamaño estricto y tipado estático), el estudiante logra discernir el concepto abstracto de la estructura de datos de su sintaxis de implementación.</p>
+        </div>
       </div>
     </div>
   </div>
