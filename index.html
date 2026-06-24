@@ -9,13 +9,63 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Hoja de Estilos de Diseño Futurista 3D -->
-  <link rel="stylesheet" href="style.css?v=1.0.7">
+  <link rel="stylesheet" href="style.css?v=1.0.8">
 </head>
 <body>
 
   <!-- Elementos de profundidad ambiental 3D en el fondo -->
   <div class="ambient-shape shape-1"></div>
   <div class="ambient-shape shape-2"></div>
+
+  <!-- PANTALLA DE BIENVENIDA / INICIO (WELCOME SCREEN) -->
+  <div id="welcome-screen">
+    <div class="welcome-container">
+      <div class="welcome-logo-area">
+        <!-- Holograma de Cubo 3D Animado -->
+        <div class="cube-hologram welcome-cube">
+          <div class="cube-face face-front"></div>
+          <div class="cube-face face-back"></div>
+          <div class="cube-face face-right"></div>
+          <div class="cube-face face-left"></div>
+          <div class="cube-face face-top"></div>
+          <div class="cube-face face-bottom"></div>
+        </div>
+        <h1 class="welcome-title">Bilingual Tech Assistant</h1>
+        <p class="welcome-tagline">El puente conceptual definitivo entre el inglés técnico y la programación real.</p>
+      </div>
+
+      <!-- Tarjetas de Características (Features) -->
+      <div class="welcome-features">
+        <div class="feature-box">
+          <i class="fa-solid fa-satellite-dish text-cyan"></i>
+          <h5>Buscador Real</h5>
+          <p>Evita traducciones literales incorrectas (ej. String, Array, Thread) con explicaciones didácticas.</p>
+        </div>
+        <div class="feature-box">
+          <i class="fa-solid fa-code text-purple"></i>
+          <h5>Código Vivo</h5>
+          <p>Compara fragmentos interactivos de sintaxis real en Python y Java en el reverso de cada concepto.</p>
+        </div>
+        <div class="feature-box">
+          <i class="fa-solid fa-users text-magenta"></i>
+          <h5>Comunidad</h5>
+          <p>Regístrate para guardar tus favoritos en la nube y aportar tus propios términos al directorio técnico.</p>
+        </div>
+      </div>
+
+      <!-- Botones de Acción (CTAs) -->
+      <div class="welcome-actions">
+        <button class="btn-welcome btn-student" id="btn-welcome-auth">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Conectar como Estudiante</span>
+        </button>
+        <button class="btn-welcome btn-guest" id="btn-welcome-guest">
+          <span>Explorar como Invitado</span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Contenedor Principal de Escritorio -->
   <div id="app-container">
@@ -176,6 +226,14 @@
             <div class="form-header-area">
               <h3><i class="fa-solid fa-square-plus text-cyan"></i> Insertar Nuevo Término</h3>
               <p>Aporta a la base de datos técnica. Todos los usuarios registrados podrán visualizar tus contribuciones.</p>
+            </div>
+            
+            <div class="guest-banner" id="add-term-guest-banner" style="display: none;">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>Debes iniciar sesión como estudiante para poder registrar nuevos conceptos en la base de datos.</span>
+              <button class="btn-flip-trigger" style="margin-left: auto; padding: 6px 12px; font-size: 0.75rem;" onclick="openModal('modal-auth')">
+                Iniciar Sesión
+              </button>
             </div>
             
             <form class="cyber-form" id="form-add-term" onsubmit="return false;">
@@ -375,13 +433,13 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
   <!-- 1. Base de datos inicial (terms-data.js) -->
-  <script src="terms-data.js?v=1.0.7"></script>
+  <script src="terms-data.js?v=1.0.8"></script>
   
   <!-- 2. Adaptador Firebase / LocalStorage (firebase-config.js) -->
-  <script src="firebase-config.js?v=1.0.7"></script>
+  <script src="firebase-config.js?v=1.0.8"></script>
   
   <!-- 3. Lógica principal de UI y comportamiento (app.js) -->
-  <script src="app.js?v=1.0.7"></script>
+  <script src="app.js?v=1.0.8"></script>
 
 </body>
 </html>

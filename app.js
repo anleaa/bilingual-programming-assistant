@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDbConfigEvents();
   initSearchAndFilterEvents();
   initFormEvents();
+  initWelcomeEvents();
   
   // Escuchar cambios de estado de sesión de Firebase
   window.FirebaseService.onAuthStateChanged(handleAuthStateChange);
@@ -109,6 +110,26 @@ function switchView(viewId) {
     menu.classList.remove('mobile-active');
   }
 
+  // Control del formulario de agregar para usuarios invitados
+  const guestBanner = document.getElementById('add-term-guest-banner');
+  const formFields = document.querySelectorAll('#form-add-term input, #form-add-term select, #form-add-term textarea, #form-add-term button');
+
+  if (viewId === 'add') {
+    if (!window.FirebaseService.currentUser) {
+      if (guestBanner) guestBanner.style.display = 'flex';
+      formFields.forEach(field => {
+        if (field.id !== 'btn-reset-form') {
+          field.disabled = true;
+        }
+      });
+    } else {
+      if (guestBanner) guestBanner.style.display = 'none';
+      formFields.forEach(field => field.disabled = false);
+    }
+  } else {
+    if (guestBanner) guestBanner.style.display = 'none';
+  }
+
   // Refrescar renderizado al cambiar de vista
   renderAllViews();
 }
@@ -167,15 +188,24 @@ function getFilteredTerms() {
 
 function renderAllViews() {
   const filtered = getFilteredTerms();
+  const currentUser = window.FirebaseService.currentUser;
 
   if (activeView === 'home') {
     renderGrid(filtered, 'terms-grid-home');
   } else if (activeView === 'list') {
     renderTable(filtered);
   } else if (activeView === 'favorites') {
-    renderGrid(filtered, 'terms-grid-favorites');
+    if (currentUser) {
+      renderGrid(filtered, 'terms-grid-favorites');
+    } else {
+      renderGuestOverlay('terms-grid-favorites', 'Inicia sesión como estudiante para guardar tus conceptos favoritos y repasar con rapidez.');
+    }
   } else if (activeView === 'my-terms') {
-    renderGrid(filtered, 'terms-grid-my-terms');
+    if (currentUser) {
+      renderGrid(filtered, 'terms-grid-my-terms');
+    } else {
+      renderGuestOverlay('terms-grid-my-terms', 'Inicia sesión como estudiante para administrar y editar los conceptos técnicos que has aportado.');
+    }
   }
 }
 
@@ -384,7 +414,7 @@ function flipCard(target, isFlip, event) {
     if (!card) {
       card = document.getElementById(`card-${target}`);
     }
-  } else if (target instanceof HTMLElement) {
+  } else if (target && typeof target.closest === 'function') {
     card = target.closest('.term-card');
   }
 
@@ -489,7 +519,8 @@ function initAuthEvents() {
   btnAuthAction.addEventListener('click', () => {
     const user = window.FirebaseService.currentUser;
     if (user) {
-      // Si ya hay usuario, al pulsar el botón se cierra sesión
+      // Al cerrar sesión, resetear el modo invitado para que vuelvan a ver la pantalla de inicio
+      isGuestMode = false;
       window.FirebaseService.logoutUser().then(() => {
         showToast("Sesión cerrada correctamente.", "success");
       });
@@ -516,10 +547,34 @@ function handleAuthStateChange(user) {
     userAvatar.textContent = user.displayName.charAt(0).toUpperCase();
     userProfile.style.display = 'flex';
     authBtnText.textContent = "Cerrar Sesión";
+    
+    // Ocultar pantalla de bienvenida automáticamente al iniciar sesión
+    const welcomeScreen = document.getElementById('welcome-screen');
+    if (welcomeScreen) {
+      welcomeScreen.classList.add('hidden');
+    }
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) {
+      appContainer.style.opacity = '1';
+      appContainer.style.pointerEvents = 'auto';
+    }
   } else {
     // Limpiar perfil
     userProfile.style.display = 'none';
     authBtnText.textContent = "Iniciar Sesión";
+    
+    // Si no está en modo invitado y no hay usuario, mostrar la pantalla de bienvenida
+    if (!isGuestMode) {
+      const welcomeScreen = document.getElementById('welcome-screen');
+      if (welcomeScreen) {
+        welcomeScreen.classList.remove('hidden');
+      }
+      const appContainer = document.getElementById('app-container');
+      if (appContainer) {
+        appContainer.style.opacity = '0.08'; // Difuminado de fondo muy tenue
+        appContainer.style.pointerEvents = 'none';
+      }
+    }
     
     // Si estábamos en Favoritos, Añadir o Términos Añadidos, y cerramos sesión, devolver a inicio
     if (activeView === 'favorites' || activeView === 'add' || activeView === 'my-terms') {
@@ -968,3 +1023,56 @@ document.addEventListener('click', (e) => {
     }
   }
 });
+
+// ==========================================================================
+// 11. SISTEMA DE BIENVENIDA / ACCESO DE INVITADO (WELCOME SYSTEM)
+// ==========================================================================
+
+let isGuestMode = false;
+
+function initWelcomeEvents() {
+  const btnWelcomeAuth = document.getElementById('btn-welcome-auth');
+  const btnWelcomeGuest = document.getElementById('btn-welcome-guest');
+
+  if (btnWelcomeAuth) {
+    btnWelcomeAuth.addEventListener('click', () => {
+      openModal('modal-auth');
+    });
+  }
+
+  if (btnWelcomeGuest) {
+    btnWelcomeGuest.addEventListener('click', () => {
+      enterAppAsGuest();
+    });
+  }
+}
+
+function enterAppAsGuest() {
+  isGuestMode = true;
+  const welcomeScreen = document.getElementById('welcome-screen');
+  if (welcomeScreen) {
+    welcomeScreen.classList.add('hidden');
+  }
+  const appContainer = document.getElementById('app-container');
+  if (appContainer) {
+    appContainer.style.opacity = '1';
+    appContainer.style.pointerEvents = 'auto';
+  }
+  renderAllViews();
+}
+
+function renderGuestOverlay(containerId, message) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div class="empty-state" style="grid-column: 1 / -1; padding: 50px 30px; border-style: solid;">
+      <div class="empty-state-icon"><i class="fa-solid fa-user-astronaut text-magenta"></i></div>
+      <h4>Acceso Restringido</h4>
+      <p style="margin-bottom: 20px; max-width: 380px; line-height: 1.5;">${message}</p>
+      <button class="btn-form-primary" onclick="openModal('modal-auth')" style="padding: 12px 24px; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; margin: 0 auto;">
+        <i class="fa-solid fa-key"></i> Iniciar Sesión / Registrarse
+      </button>
+    </div>
+  `;
+}
