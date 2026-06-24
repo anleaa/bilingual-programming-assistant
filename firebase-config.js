@@ -143,9 +143,18 @@ class FirebaseBridge {
       this.db.ref(`users/${this.currentUser.uid}/favorites`).off('value', this.favoritesUnsubscribe);
     }
     
-    // Escuchar favoritos en tiempo real para el usuario activo
+    // Escuchar favoritos en tiempo real para el usuario activo (garantizando formato array)
     this.favoritesUnsubscribe = (snapshot) => {
-      this.favoritesCache = snapshot.val() || [];
+      const val = snapshot.val();
+      if (!val) {
+        this.favoritesCache = [];
+      } else if (Array.isArray(val)) {
+        this.favoritesCache = val;
+      } else if (typeof val === 'object') {
+        this.favoritesCache = Object.values(val);
+      } else {
+        this.favoritesCache = [];
+      }
       console.log("💖 Favoritos sincronizados en tiempo real (Realtime DB):", this.favoritesCache.length);
       
       if (window.renderAllViews) window.renderAllViews();

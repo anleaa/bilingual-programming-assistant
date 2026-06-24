@@ -227,7 +227,7 @@ function renderGrid(terms, containerId) {
               <span class="creator-tag">
                 ${isCustom ? `Por: <span>${term.creatorName}</span>` : 'Sistema Técnico'}
               </span>
-              <button class="btn-flip-trigger" onclick="flipCard('${term.id}', true)">
+              <button class="btn-flip-trigger" onclick="flipCard(this, true, event)">
                 <span>Ver Detalles</span> <i class="fa-solid fa-chevron-right"></i>
               </button>
             </div>
@@ -237,7 +237,7 @@ function renderGrid(terms, containerId) {
           <div class="card-back">
             <div class="back-header">
               <span class="back-title">${term.english}</span>
-              <button class="btn-card-action" onclick="flipCard('${term.id}', false)">
+              <button class="btn-card-action" onclick="flipCard(this, false, event)">
                 <i class="fa-solid fa-rotate-left"></i>
               </button>
             </div>
@@ -250,16 +250,16 @@ function renderGrid(terms, containerId) {
             <!-- Bloque de Código de Programación -->
             <div class="code-module">
               <div class="code-tabs">
-                <button class="tab-btn active" data-lang="python" onclick="switchCodeTab('${term.id}', 'python', event)">
+                <button class="tab-btn active" data-lang="python" onclick="switchCodeTab(this, '${term.id}', 'python', event)">
                   <i class="fa-brands fa-python"></i> Python
                 </button>
-                <button class="tab-btn" data-lang="java" onclick="switchCodeTab('${term.id}', 'java', event)">
+                <button class="tab-btn" data-lang="java" onclick="switchCodeTab(this, '${term.id}', 'java', event)">
                   <i class="fa-brands fa-java"></i> Java
                 </button>
               </div>
               
               <div class="code-wrapper" id="code-wrap-${term.id}">
-                <button class="btn-copy-code" onclick="copyCodeSnippet('${term.id}', event)" title="Copiar código">
+                <button class="btn-copy-code" onclick="copyCodeSnippet(this, event)" title="Copiar código">
                   <i class="fa-solid fa-copy"></i>
                 </button>
                 <pre><code id="code-content-${term.id}">${escapeHtml(term.codePython)}</code></pre>
@@ -370,9 +370,24 @@ function apply3DTiltEffect() {
   });
 }
 
-// Voltear la tarjeta 3D
-function flipCard(termId, isFlip) {
-  const card = document.getElementById(`card-${termId}`);
+// Voltear la tarjeta 3D (soporta elemento DOM o id de cadena)
+function flipCard(target, isFlip, event) {
+  if (event) event.stopPropagation();
+
+  let card;
+  if (typeof target === 'string') {
+    // Buscar por ID, preferiendo el de la vista activa si hay duplicados
+    const activeViewEl = document.getElementById(`view-${activeView}`);
+    if (activeViewEl) {
+      card = activeViewEl.querySelector(`[id="card-${target}"]`);
+    }
+    if (!card) {
+      card = document.getElementById(`card-${target}`);
+    }
+  } else if (target instanceof HTMLElement) {
+    card = target.closest('.term-card');
+  }
+
   if (!card) return;
 
   if (isFlip) {
@@ -408,13 +423,21 @@ function viewTermDetailsFromTable(termId) {
   }, 300);
 }
 
-// Cambiar la pestaña de lenguaje de código en el reverso de la tarjeta
-function switchCodeTab(termId, lang, event) {
-  event.stopPropagation(); // Evitar voltear la tarjeta al hacer clic en pestañas
+// Cambiar la pestaña de lenguaje de código en el reverso de la tarjeta (robusto a duplicados)
+function switchCodeTab(target, termId, lang, event) {
+  if (event) event.stopPropagation(); // Evitar voltear la tarjeta al hacer clic en pestañas
   
-  const card = document.getElementById(`card-${termId}`);
+  let card;
+  if (target instanceof HTMLElement) {
+    card = target.closest('.term-card');
+  } else {
+    card = document.getElementById(`card-${termId}`);
+  }
+  if (!card) return;
+
   const tabs = card.querySelectorAll('.tab-btn');
-  const codeContent = document.getElementById(`code-content-${termId}`);
+  const codeContent = card.querySelector('code');
+  if (!codeContent) return;
   
   const combined = getCombinedTerms();
   const term = combined.find(t => t.id === termId);
@@ -435,11 +458,19 @@ function switchCodeTab(termId, lang, event) {
   }
 }
 
-// Copiar código al portapapeles
-function copyCodeSnippet(termId, event) {
-  event.stopPropagation(); // Evitar voltear la tarjeta
+// Copiar código al portapapeles (robusto a duplicados)
+function copyCodeSnippet(target, event) {
+  if (event) event.stopPropagation(); // Evitar voltear la tarjeta
   
-  const codeContent = document.getElementById(`code-content-${termId}`).textContent;
+  let card;
+  if (target instanceof HTMLElement) {
+    card = target.closest('.term-card');
+  }
+  
+  const codeEl = card ? card.querySelector('code') : null;
+  if (!codeEl) return;
+  
+  const codeContent = codeEl.textContent;
   
   navigator.clipboard.writeText(codeContent).then(() => {
     showToast("Código de ejemplo copiado al portapapeles.", "success");
