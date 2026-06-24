@@ -304,7 +304,7 @@ function renderGrid(terms, containerId) {
   });
 
   // Re-inicializar efectos físicos 3D sobre las nuevas tarjetas
-  apply3DTiltEffect();
+  apply3DTiltEffect(containerId);
 }
 
 // Renderiza los términos en formato Tabla de Datos Completa
@@ -361,36 +361,39 @@ function getEmptyStateHTML() {
 // 4. ANIMACIONES E INTERACTIVIDAD 3D (3D ANIMATIONS & TILT PHYSICS)
 // ==========================================================================
 
-// Efecto Tilt 3D Holográfico que sigue el puntero del ratón
-function apply3DTiltEffect() {
-  const cards = document.querySelectorAll('.term-card-container');
+// Efecto Tilt 3D Holográfico que sigue el puntero del ratón (localizado por contenedor)
+function apply3DTiltEffect(containerId) {
+  const container = containerId ? document.getElementById(containerId) : document;
+  if (!container) return;
   
-  cards.forEach(container => {
-    const card = container.querySelector('.term-card');
+  const cards = container.querySelectorAll('.term-card-container');
+  
+  cards.forEach(cardContainer => {
+    const card = cardContainer.querySelector('.term-card');
+    if (!card) return;
     
-    // Evitar añadir múltiples listeners si ya existen
-    container.addEventListener('mousemove', (e) => {
+    cardContainer.addEventListener('mousemove', (e) => {
       // Si la tarjeta está volteada (flipped), no aplicar inclinación para no distorsionar el reverso
       if (card.classList.contains('flipped')) {
         card.style.transform = 'rotateY(180deg)';
         return;
       }
 
-      const rect = container.getBoundingClientRect();
+      const rect = cardContainer.getBoundingClientRect();
       const x = e.clientX - rect.left; // posición X del cursor en el elemento
       const y = e.clientY - rect.top;  // posición Y del cursor en el elemento
       
       const width = rect.width;
       const height = rect.height;
       
-      // Calcular la inclinación angular (-15deg a +15deg máx)
+      // Calcular la inclinación angular (-20deg a +20deg máx)
       const rotateX = ((y / height) - 0.5) * -20;
       const rotateY = ((x / width) - 0.5) * 20;
       
       card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(12px)`;
     });
     
-    container.addEventListener('mouseleave', () => {
+    cardContainer.addEventListener('mouseleave', () => {
       if (card.classList.contains('flipped')) {
         card.style.transform = 'rotateY(180deg)';
       } else {
